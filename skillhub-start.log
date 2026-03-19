@@ -1,0 +1,6 @@
+
+> skillhub@0.1.0 start C:\Users\liuyu\skillhub
+> next start "--" "--port" "3002"
+
+Invalid project directory provided, no such directory: C:\Users\liuyu\skillhub\--port
+ ELIFECYCLE  Command failed with exit code 1.

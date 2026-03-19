@@ -1,0 +1,42 @@
+
+> skillhub@0.1.0 dev C:\Users\liuyu\skillhub
+> next dev
+
+▲ Next.js 16.1.7 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.1.23.69:3000
+
+✓ Starting...
+✓ Ready in 779ms
+ GET / 200 in 2.2s (compile: 1922ms, render: 314ms)
+ GET / 200 in 84ms (compile: 3ms, render: 81ms)
+ POST /api/skills/does-not-exist/like 404 in 774ms (compile: 756ms, render: 18ms)
+ HEAD / 200 in 63ms (compile: 3ms, render: 60ms)
+ GET / 200 in 56ms (compile: 2ms, render: 53ms)
+ POST /api/skills/does-not-exist/like 404 in 14ms (compile: 8ms, render: 6ms)
+ POST /api/auth/mock-login 200 in 139ms (compile: 132ms, render: 6ms)
+ POST /api/auth/mock-login 200 in 7ms (compile: 2ms, render: 5ms)
+ POST /api/skills/f38bf5ea-3534-490f-883e-5abbfad5994f/like 404 in 14ms (compile: 8ms, render: 6ms)
+ HEAD /skills/framer-motion-animations 200 in 959ms (compile: 753ms, render: 206ms)
+ GET /skills/framer-motion-animations 200 in 707ms (compile: 485ms, render: 222ms)
+ GET /api/skills/f38bf5ea-3534-490f-883e-5abbfad5994f/download 404 in 732ms (compile: 724ms, render: 8ms)
+ POST /api/skills/fb81f383-8664-4cd0-b5a6-d5e2e11f0e70/like 200 in 17ms (compile: 9ms, render: 8ms)
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\liuyu\AppData\Local\Temp\next-panic-50feecdb234f9856c52a6d4256d3a1b6.log.
+
+To help make Turbopack better, report this error by ]8;;https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20%5Bproject%5D%2Fsrc%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29&body=Turbopack%20version%3A%20%60dc98c04f%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0A%5Bproject%5D%2Fsrc%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29%0A%0ACaused%20by%3A%0A-%20reading%20file%20C%3A%5CUsers%5Cliuyu%5Cskillhub%5CNUL%0A-%20%E5%87%BD%E6%95%B0%E4%B8%8D%E6%AD%A3%E7%A1%AE%E3%80%82%20%28os%20error%201%29%0A%0ADebug%20info%3A%0A-%20Execution%20of%20subscribe_issues_and_diags_operation%20failed%0A-%20Execution%20of%20%3CAppEndpoint%20as%20Endpoint%3E%3A%3Aserver_changed%20failed%0A-%20Execution%20of%20%2AProject%3A%3Aserver_changed%20failed%0A-%20Execution%20of%20%2AAppEndpointOutput%3A%3Aserver_assets%20failed%0A-%20Execution%20of%20AppEndpoint%3A%3Aoutput%20failed%0A-%20Execution%20of%20AppProject%3A%3Aapp_module_graphs%20failed%0A-%20Execution%20of%20%2A%3CAppEndpoint%20as%20Endpoint%3E%3A%3Aadditional_entries%20failed%0A-%20Execution%20of%20%2AModuleGraph%3A%3Afrom_graphs%20failed%0A-%20Execution%20of%20SingleModuleGraph%3A%3Anew_with_entries_visited_intern%20failed%0A-%20%5Bproject%5D%2Fsrc%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29%0A-%20Execution%20of%20primary_chunkable_referenced_modules%20failed%0A-%20Execution%20of%20%3CCssModuleAsset%20as%20Module%3E%3A%3Areferences%20failed%0A-%20Execution%20of%20parse_css%20failed%0A-%20Execution%20of%20%3CPostCssTransformedAsset%20as%20Asset%3E%3A%3Acontent%20failed%0A-%20Execution%20of%20PostCssTransformedAsset%3A%3Aprocess%20failed%0A-%20Execution%20of%20evaluate_webpack_loader%20failed%0A-%20Execution%20of%20%3CDiskFileSystem%20as%20FileSystem%3E%3A%3Aread%20failed%0A-%20reading%20file%20C%3A%5CUsers%5Cliuyu%5Cskillhub%5CNUL%0A-%20%E5%87%BD%E6%95%B0%E4%B8%8D%E6%AD%A3%E7%A1%AE%E3%80%82%20%28os%20error%201%29%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace\clicking here.]8;;\
+-----
+
+✓ Compiled in 60ms
+ GET /api/skills/fb81f383-8664-4cd0-b5a6-d5e2e11f0e70/download 200 in 18ms (compile: 8ms, render: 10ms)
+ POST /api/auth/mock-login 200 in 5ms (compile: 2ms, render: 3ms)
+ POST /api/skills/upload 401 in 151ms (compile: 147ms, render: 5ms)
+ POST /api/auth/mock-login 200 in 4ms (compile: 1615µs, render: 3ms)
+ GET /upload 200 in 311ms (compile: 266ms, render: 45ms)
+ POST /api/auth/mock-login 200 in 7ms (compile: 2ms, render: 4ms)
+ GET /upload 200 in 35ms (compile: 2ms, render: 33ms)
+ POST /api/auth/mock-login 200 in 7ms (compile: 3ms, render: 3ms)
+ POST /api/skills/upload 401 in 6ms (compile: 1929µs, render: 4ms)
+[?25h
+ ELIFECYCLE  Command failed with exit code 1.

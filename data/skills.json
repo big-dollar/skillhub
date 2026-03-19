@@ -1,0 +1,103 @@
+{
+  "skills": [
+    {
+      "title": "React Server Components Mastery",
+      "summary": "A comprehensive guide and set of patterns for mastering React Server Components in Next.js App Router. Includes advanced caching strategies and streaming examples.",
+      "description": "A comprehensive guide and set of patterns for mastering React Server Components in Next.js App Router. Includes advanced caching strategies and streaming examples.",
+      "uploaderName": "Alice Dev",
+      "archivePath": "data\\uploads\\react-server-components-mastery.zip",
+      "skillMdPath": "data\\extracted\\react-server-components-mastery-SKILL.md",
+      "readmeStubPath": "data\\generated\\react-server-components-mastery-README.md",
+      "createdAt": "2023-10-15T08:00:00Z",
+      "updatedAt": "2024-01-20T14:30:00Z",
+      "version": "1.2.0",
+      "tags": [
+        "react",
+        "nextjs",
+        "rsc",
+        "performance"
+      ],
+      "id": "c1603bee-9864-4d2f-aafb-b0eb05d398f6",
+      "slug": "react-server-components-mastery",
+      "likes": 124,
+      "downloads": 890
+    },
+    {
+      "title": "Tailwind CSS Pro Tips",
+      "summary": "Learn how to build complex, responsive, and beautiful UIs with Tailwind CSS. Covers arbitrary values, custom plugins, and dark mode.",
+      "description": "Learn how to build complex, responsive, and beautiful UIs with Tailwind CSS. Covers arbitrary values, custom plugins, and dark mode.",
+      "uploaderName": "Bob Coder",
+      "archivePath": "data\\uploads\\tailwind-css-pro-tips.zip",
+      "skillMdPath": "data\\extracted\\tailwind-css-pro-tips-SKILL.md",
+      "readmeStubPath": "data\\generated\\tailwind-css-pro-tips-README.md",
+      "createdAt": "2023-11-02T10:15:00Z",
+      "updatedAt": "2023-12-05T09:45:00Z",
+      "version": "2.0.1",
+      "tags": [
+        "css",
+        "tailwind",
+        "design"
+      ],
+      "id": "2d7aa4c0-26ee-4751-8358-1fb30dc8ad8f",
+      "slug": "tailwind-css-pro-tips",
+      "likes": 342,
+      "downloads": 2100
+    },
+    {
+      "title": "TypeScript Advanced Types",
+      "summary": "Deep dive into utility types, mapped types, conditional types, and template literal types to write robust and type-safe code.",
+      "description": "Deep dive into utility types, mapped types, conditional types, and template literal types to write robust and type-safe code.",
+      "uploaderName": "Alice Dev",
+      "archivePath": "data\\uploads\\typescript-advanced-types.zip",
+      "skillMdPath": "data\\extracted\\typescript-advanced-types-SKILL.md",
+      "readmeStubPath": "data\\generated\\typescript-advanced-types-README.md",
+      "createdAt": "2024-02-10T16:20:00Z",
+      "updatedAt": "2024-02-15T11:00:00Z",
+      "version": "1.0.0",
+      "tags": [
+        "typescript",
+        "types"
+      ],
+      "id": "a110685e-6b65-4000-a69a-92efde924bf9",
+      "slug": "typescript-advanced-types",
+      "likes": 89,
+      "downloads": 450
+    },
+    {
+      "title": "Framer Motion Animations",
+      "summary": "Add beautiful, fluid animations to your React apps. Covers layout animations, gesture recognition, and scroll-linked effects.",
+      "description": "Add beautiful, fluid animations to your React apps. Covers layout animations, gesture recognition, and scroll-linked effects.",
+      "uploaderName": "Charlie Hacker",
+      "archivePath": "data\\uploads\\framer-motion-animations.zip",
+      "skillMdPath": "data\\extracted\\framer-motion-animations-SKILL.md",
+      "readmeStubPath": "data\\generated\\framer-motion-animations-README.md",
+      "createdAt": "2023-09-05T13:40:00Z",
+      "updatedAt": "2024-03-01T10:00:00Z",
+      "version": "3.1.4",
+      "tags": [
+        "react",
+        "animation",
+        "motion"
+      ],
+      "id": "fb81f383-8664-4cd0-b5a6-d5e2e11f0e70",
+      "slug": "framer-motion-animations",
+      "likes": 513,
+      "downloads": 1930
+    },
+    {
+      "title": "当当",
+      "summary": "当当图书",
+      "uploaderName": "Demo Uploader",
+      "archivePath": "data\\uploads\\907a600d-bf2e-45ca-a7c8-ed76be17cc5e-dangdang-scraper.zip",
+      "skillMdPath": "data\\extracted\\2956fe1f-5152-450c-a239-6bb5e70aa887-skill.md",
+      "readmeStubPath": "data\\generated\\606be1c7-8a15-4a69-a232-0f4639a2e81b-README.md",
+      "id": "bb93dbac-6c5d-4a65-aad9-0aacd07c5cb9",
+      "slug": "skill",
+      "likes": 2,
+      "downloads": 1,
+      "description": "当当图书",
+      "createdAt": "2026-03-19T02:07:18.461Z",
+      "updatedAt": "2026-03-19T02:07:18.461Z"
+    }
+  ]
+}
