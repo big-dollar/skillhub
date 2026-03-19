@@ -168,7 +168,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Link
-                    href={`/skills/${skill.id}/edit`}
+                    href={`/skills/${skill.slug}/edit`}
                     className="rounded-md border border-border px-3 py-2 text-sm font-medium transition-colors hover:border-primary hover:text-primary flex items-center gap-1"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

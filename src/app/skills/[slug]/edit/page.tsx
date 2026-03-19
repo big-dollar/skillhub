@@ -6,14 +6,15 @@ import Link from "next/link";
 
 interface Skill {
   id: string;
+  slug: string;
   title: string;
   summary: string;
   version?: string;
 }
 
-export default function EditSkillPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditSkillPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
-  const [skillId, setSkillId] = useState<string>("");
+  const [skillSlug, setSkillSlug] = useState<string>("");
   const [skill, setSkill] = useState<Skill | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -21,15 +22,15 @@ export default function EditSkillPage({ params }: { params: Promise<{ id: string
 
   useEffect(() => {
     // Unwrap params
-    params.then(({ id }) => {
-      setSkillId(id);
-      fetchSkill(id);
+    params.then(({ slug }) => {
+      setSkillSlug(slug);
+      fetchSkill(slug);
     });
   }, [params]);
 
-  const fetchSkill = async (id: string) => {
+  const fetchSkill = async (slug: string) => {
     try {
-      const response = await fetch(`/api/skills/${id}`);
+      const response = await fetch(`/api/skills/by-slug/${slug}`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -52,7 +53,11 @@ export default function EditSkillPage({ params }: { params: Promise<{ id: string
     const formData = new FormData(e.currentTarget);
 
     try {
-      const response = await fetch(`/api/skills/${skillId}/edit`, {
+      if (!skill) {
+        throw new Error("技能信息未加载");
+      }
+
+      const response = await fetch(`/api/skills/${skill.id}/edit`, {
         method: "POST",
         body: formData,
       });
