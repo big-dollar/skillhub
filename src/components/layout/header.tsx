@@ -9,7 +9,7 @@ export async function Header() {
           <div className="w-8 h-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-bold">
             S
           </div>
-          SkillHub
+          SkillHub (技能中心)
         </Link>
         
         <nav className="flex items-center gap-6">

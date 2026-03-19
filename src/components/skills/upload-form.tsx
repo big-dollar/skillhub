@@ -42,7 +42,7 @@ export function UploadForm() {
     <form action={handleSubmit} className="space-y-8 rounded-xl border bg-card p-6 shadow-sm md:p-8">
       <div className="space-y-2">
         <label className="text-sm font-medium" htmlFor="title">
-          Skill 标题
+          技能 标题
         </label>
         <input
           className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -61,14 +61,14 @@ export function UploadForm() {
           className="flex min-h-[140px] w-full rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           id="summary"
           name="summary"
-          placeholder="请描述这个 skill 的用途，以及开发者应在什么场景下使用它。"
+          placeholder="请描述这个 技能 的用途，以及开发者应在什么场景下使用它。"
           required
         />
       </div>
 
       <div className="space-y-3">
         <label className="text-sm font-medium" htmlFor="file">
-          Skill ZIP
+          技能 ZIP
         </label>
         <input
           accept=".zip,application/zip"
@@ -92,7 +92,7 @@ export function UploadForm() {
           disabled={isSubmitting}
           type="submit"
         >
-          {isSubmitting ? "发布中..." : "发布 Skill"}
+          {isSubmitting ? "发布中..." : "发布 技能"}
         </button>
       </div>
     </form>

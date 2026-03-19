@@ -83,7 +83,7 @@ export default async function SkillDetailPage({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
              <div className="prose prose-zinc dark:prose-invert max-w-none">
-                <h2 className="font-display text-2xl font-semibold mb-4">关于这个 skill</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">关于这个 技能</h2>
              {skill.readmeContent.split(/\r?\n\r?\n/).map((block, index) => (
                <p className="text-muted-foreground whitespace-pre-wrap" key={`${skill.id}-${index}`}>
                  {block}
