@@ -14,7 +14,10 @@ export interface ISkillRepository {
   list(options?: ListSkillsOptions): Promise<SkillRecord[]>;
   getBySlug(slug: string): Promise<SkillRecord | null>;
   getById(id: string): Promise<SkillRecord | null>;
+  getByUploader(uploaderId: number | string): Promise<SkillRecord[]>;
   create(input: CreateSkillRecordInput): Promise<SkillRecord>;
+  update(id: string, input: Partial<SkillRecord>): Promise<SkillRecord>;
+  delete(id: string): Promise<void>;
   incrementLikes(id: string): Promise<SkillRecord>;
   incrementDownloads(id: string): Promise<SkillRecord>;
 }
@@ -47,6 +50,14 @@ export class SkillRepository implements ISkillRepository {
     return store.skills.find((skill) => skill.id === id) ?? null;
   }
 
+  async getByUploader(uploaderId: number | string): Promise<SkillRecord[]> {
+    const store = await this.readStore();
+    return store.skills.filter((skill) => 
+      skill.uploaderGitHubId === uploaderId || 
+      skill.uploaderName === uploaderId
+    );
+  }
+
   async create(input: CreateSkillRecordInput): Promise<SkillRecord> {
     const store = await this.readStore();
     const record: SkillRecord = {
@@ -67,6 +78,38 @@ export class SkillRepository implements ISkillRepository {
 
   async incrementDownloads(id: string): Promise<SkillRecord> {
     return this.incrementCounter(id, "downloads");
+  }
+
+  async update(id: string, updates: Partial<SkillRecord>): Promise<SkillRecord> {
+    const store = await this.readStore();
+    const index = store.skills.findIndex((skill) => skill.id === id);
+
+    if (index === -1) {
+      throw new Error("Skill not found");
+    }
+
+    const updatedSkill: SkillRecord = {
+      ...store.skills[index],
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+
+    store.skills[index] = updatedSkill;
+    await this.writeStore(store);
+
+    return updatedSkill;
+  }
+
+  async delete(id: string): Promise<void> {
+    const store = await this.readStore();
+    const index = store.skills.findIndex((skill) => skill.id === id);
+
+    if (index === -1) {
+      throw new Error("Skill not found");
+    }
+
+    store.skills.splice(index, 1);
+    await this.writeStore(store);
   }
 
   async save(skills: SkillRecord[]): Promise<void> {
