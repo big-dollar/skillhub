@@ -17,6 +17,10 @@ export async function GET(): Promise<NextResponse> {
 
   // Store state in cookie (short-lived, 10 minutes)
   const oauthUrl = getFeishuOAuthUrl(config, state);
+  
+  // Debug: log the generated OAuth URL
+  console.log("[Feishu OAuth] Generated URL:", oauthUrl);
+  console.log("[Feishu OAuth] Redirect URI:", config.redirectUri);
 
   const response = NextResponse.redirect(oauthUrl);
   response.cookies.set({

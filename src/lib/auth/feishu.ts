@@ -10,14 +10,50 @@ export interface FeishuOAuthConfig {
   redirectUri: string;
 }
 
-export function getFeishuOAuthUrl(config: FeishuOAuthConfig, state: string): string {
-  const params = new URLSearchParams({
-    app_id: config.appId,
-    redirect_uri: config.redirectUri,
-    state,
-  });
+// 获取飞书 app_access_token
+async function getAppAccessToken(appId: string, appSecret: string): Promise<string | null> {
+  try {
+    const response = await fetch("https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        app_id: appId,
+        app_secret: appSecret,
+      }),
+    });
 
-  return `${FEISHU_OAUTH_URL}?${params.toString()}`;
+    if (!response.ok) {
+      console.error("Feishu app_access_token failed:", await response.text());
+      return null;
+    }
+
+    const data = (await response.json()) as {
+      code: number;
+      msg: string;
+      app_access_token?: string;
+    };
+
+    if (data.code !== 0 || !data.app_access_token) {
+      console.error("Feishu app_access_token error:", data.msg);
+      return null;
+    }
+
+    return data.app_access_token;
+  } catch (error) {
+    console.error("Feishu app_access_token error:", error);
+    return null;
+  }
+}
+
+export function getFeishuOAuthUrl(config: FeishuOAuthConfig, state: string): string {
+  // 手动构建 URL，确保 redirect_uri 不被双重编码
+  const encodedAppId = encodeURIComponent(config.appId);
+  const encodedRedirectUri = encodeURIComponent(config.redirectUri);
+  const encodedState = encodeURIComponent(state);
+  
+  return `${FEISHU_OAUTH_URL}?app_id=${encodedAppId}&redirect_uri=${encodedRedirectUri}&state=${encodedState}`;
 }
 
 export async function exchangeFeishuCodeForToken(
@@ -25,10 +61,18 @@ export async function exchangeFeishuCodeForToken(
   code: string,
 ): Promise<string | null> {
   try {
+    // 首先获取 app_access_token
+    const appAccessToken = await getAppAccessToken(config.appId, config.appSecret);
+    if (!appAccessToken) {
+      console.error("Failed to get app_access_token");
+      return null;
+    }
+
     const response = await fetch(FEISHU_TOKEN_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${appAccessToken}`,
       },
       body: JSON.stringify({
         grant_type: "authorization_code",
