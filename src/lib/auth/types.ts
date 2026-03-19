@@ -6,11 +6,23 @@ export interface GitHubUser {
   email: string | null;
 }
 
+export interface FeishuUser {
+  id: string;
+  name: string;
+  avatar_url: string;
+  email: string | null;
+  mobile: string | null;
+}
+
+export type User = GitHubUser | FeishuUser;
+
 export interface Session {
-  user: GitHubUser;
+  user: User;
   loggedInAt: string;
+  provider: "github" | "feishu";
 }
 
 export interface SessionPayload {
-  user: GitHubUser;
+  user: User;
+  provider: "github" | "feishu";
 }

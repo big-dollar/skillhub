@@ -5,11 +5,25 @@ import { extractSkillMd } from "@/lib/ingestion/extract-skill-md";
 import { generateReadmeStub } from "@/lib/ingestion/generate-readme-stub";
 import type { IngestionError, IngestionResult, UploadInput } from "@/lib/ingestion/types";
 import { SkillService } from "@/lib/skills/service";
-import type { GitHubUser } from "@/lib/auth/types";
+import type { User } from "@/lib/auth/types";
+
+function getUploaderName(user: User): string {
+  if ("login" in user) {
+    return user.name ?? user.login;
+  }
+  return user.name;
+}
+
+function getUploaderId(user: User): number | undefined {
+  if ("login" in user) {
+    return user.id;
+  }
+  return undefined;
+}
 
 export async function processUpload(
   input: UploadInput,
-  uploader: GitHubUser,
+  uploader: User,
   dataDir: string,
   skillService: SkillService,
 ): Promise<IngestionResult | IngestionError> {
@@ -33,9 +47,9 @@ export async function processUpload(
   const skill = await skillService.createSkill({
     title: input.title,
     summary: input.summary,
-    uploaderName: uploader.name ?? uploader.login,
+    uploaderName: getUploaderName(uploader),
     uploaderAvatar: uploader.avatar_url,
-    uploaderGitHubId: uploader.id,
+    uploaderGitHubId: getUploaderId(uploader),
     archivePath: path.relative(process.cwd(), archivePath),
     skillMdPath: path.relative(process.cwd(), extractionResult.skillMdPath),
     readmeStubPath: path.relative(process.cwd(), readmeStubPath),

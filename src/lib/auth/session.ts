@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
-import type { Session, SessionPayload, GitHubUser } from "@/lib/auth/types";
+import type { Session, SessionPayload, User } from "@/lib/auth/types";
 
 export const COOKIE_NAME = "skillhub-session";
 export const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7;
@@ -11,11 +11,20 @@ export function createSession(payload: SessionPayload, now = new Date()): Sessio
   return {
     user: payload.user,
     loggedInAt: now.toISOString(),
+    provider: payload.provider ?? "github",
   };
 }
 
 export function encodeSession(session: Session): string {
   return encodeURIComponent(JSON.stringify(session));
+}
+
+function isGitHubUser(user: Partial<User> & Record<string, unknown>): boolean {
+  return typeof user.id === "number" && typeof user.login === "string";
+}
+
+function isFeishuUser(user: Partial<User> & Record<string, unknown>): boolean {
+  return typeof user.id === "string" && typeof user.name === "string";
 }
 
 export function decodeSession(value?: string | null): Session | null {
@@ -30,22 +39,40 @@ export function decodeSession(value?: string | null): Session | null {
       return null;
     }
 
-    // Validate GitHub user structure
-    const user = parsed.user as Partial<GitHubUser>;
-    if (typeof user.id !== "number" || typeof user.login !== "string") {
-      return null;
+    const user = parsed.user as unknown as Record<string, unknown>;
+    const provider = parsed.provider ?? "github";
+
+    // Handle GitHub user
+    if (isGitHubUser(user)) {
+      return {
+        user: {
+          id: user.id as number,
+          login: user.login as string,
+          name: (user.name as string | undefined) ?? (user.login as string),
+          avatar_url: (user.avatar_url as string | undefined) ?? "",
+          email: (user.email as string | null | undefined) ?? null,
+        },
+        loggedInAt: parsed.loggedInAt,
+        provider,
+      };
     }
 
-    return {
-      user: {
-        id: user.id,
-        login: user.login,
-        name: user.name ?? user.login,
-        avatar_url: user.avatar_url ?? "",
-        email: user.email ?? null,
-      },
-      loggedInAt: parsed.loggedInAt,
-    };
+    // Handle Feishu user
+    if (isFeishuUser(user)) {
+      return {
+        user: {
+          id: user.id as string,
+          name: user.name as string,
+          avatar_url: (user.avatar_url as string | undefined) ?? "",
+          email: (user.email as string | null | undefined) ?? null,
+          mobile: (user.mobile as string | null | undefined) ?? null,
+        },
+        loggedInAt: parsed.loggedInAt,
+        provider,
+      };
+    }
+
+    return null;
   } catch {
     return null;
   }

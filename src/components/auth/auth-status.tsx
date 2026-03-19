@@ -1,6 +1,14 @@
 import { getSession } from "@/lib/auth/session";
 import { LoginButton } from "@/components/auth/login-button";
 import { LogoutButton } from "@/components/auth/logout-button";
+import type { User } from "@/lib/auth/types";
+
+function getDisplayName(user: User): string {
+  if ("login" in user) {
+    return user.name ?? user.login;
+  }
+  return user.name;
+}
 
 export async function AuthStatus() {
   const session = await getSession();
@@ -9,7 +17,7 @@ export async function AuthStatus() {
     return <LoginButton />;
   }
 
-  const displayName = session.user.name ?? session.user.login;
+  const displayName = getDisplayName(session.user);
 
   return (
     <div className="flex items-center gap-3">

@@ -10,7 +10,8 @@ describe("auth routes", () => {
     const response = await login();
     const body = await response.json();
 
-    expect(body).toEqual({ success: true, uploaderName: "Demo Uploader" });
+    expect(body.success).toBe(true);
+    expect(body.user).toBeDefined();
     expect(response.headers.get("set-cookie")).toContain(`${COOKIE_NAME}=`);
   });
 

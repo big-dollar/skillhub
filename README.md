@@ -6,6 +6,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/Tailwind-4-38B2AC?style=flat-square&logo=tailwind-css" alt="Tailwind">
   <img src="https://img.shields.io/badge/GitHub%20OAuth-集成-success?style=flat-square&logo=github" alt="GitHub OAuth">
+  <img src="https://img.shields.io/badge/飞书-集成-blue?style=flat-square" alt="Feishu">
 </p>
 
 <p align="center">
@@ -22,9 +23,10 @@
 - **多维排序**：点赞最多、最新发布、下载最多
 - **实时过滤**：即时展示搜索结果
 
-### 👤 GitHub 登录集成
-- **一键登录**：使用 GitHub 账号快速登录
-- **真实身份**：显示 GitHub 头像和用户名
+### 👤 多平台登录集成
+- **GitHub 登录**：使用 GitHub 账号快速登录
+- **飞书登录**：支持飞书企业账号登录
+- **真实身份**：显示用户头像和姓名
 - **安全可靠**：基于 OAuth 2.0 标准协议
 
 ### 📦 Skill 上传与分享
@@ -54,7 +56,8 @@
 | 技术 | 用途 |
 |------|------|
 | **Next.js API Routes** | RESTful API 服务端 |
-| **GitHub OAuth** | 用户认证授权 |
+| **GitHub OAuth** | GitHub 认证授权 |
+| **飞书 OAuth** | 飞书认证授权 |
 | **JSON 文件存储** | 轻量级数据持久化 |
 | **Adm-Zip** | ZIP 文件解析处理 |
 
@@ -65,8 +68,11 @@ skillhub/
 │   ├── app/                    # Next.js App Router
 │   │   ├── api/               # API 路由
 │   │   │   ├── auth/          # 认证相关
-│   │   │   │   ├── callback/github/  # GitHub OAuth 回调
-│   │   │   │   ├── login/            # 登录跳转
+│   │   │   │   ├── callback/
+│   │   │   │   │   ├── github/       # GitHub OAuth 回调
+│   │   │   │   │   └── feishu/       # 飞书 OAuth 回调
+│   │   │   │   ├── login/            # GitHub 登录跳转
+│   │   │   │   ├── feishu-login/     # 飞书登录跳转
 │   │   │   │   └── logout/           # 退出登录
 │   │   │   └── skills/        # Skill API
 │   │   │       ├── [id]/
@@ -114,13 +120,20 @@ pnpm install
 cp .env.example .env.local
 ```
 
-编辑 `.env.local` 填入你的 GitHub OAuth 配置：
+编辑 `.env.local` 填入你的 OAuth 配置：
 ```bash
 # GitHub OAuth 配置
 # 1. 访问 https://github.com/settings/applications/new
 # 2. 创建 OAuth App，回调地址填：http://localhost:3000/api/auth/callback/github
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
+
+# 飞书 OAuth 配置（可选）
+# 1. 访问 https://open.feishu.cn/app
+# 2. 创建应用并开启"Authen"权限
+# 3. 设置回调地址：http://localhost:3000/api/auth/callback/feishu
+FEISHU_APP_ID=your_feishu_app_id
+FEISHU_APP_SECRET=your_feishu_app_secret
 
 # 应用地址
 NEXT_PUBLIC_APP_URL=http://localhost:3000

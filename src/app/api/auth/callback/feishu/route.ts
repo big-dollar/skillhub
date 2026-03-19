@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { applySessionCookie } from "@/lib/auth/session";
-import { exchangeCodeForToken, getGitHubUser, getOAuthConfig } from "@/lib/auth/github";
+import { exchangeFeishuCodeForToken, getFeishuUser, getFeishuOAuthConfig } from "@/lib/auth/feishu";
 
 export async function GET(request: Request): Promise<NextResponse> {
   const url = new URL(request.url);
@@ -22,7 +22,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     return NextResponse.redirect(new URL("/upload?error=invalid_state", request.url));
   }
 
-  // Handle GitHub OAuth errors
+  // Handle Feishu OAuth errors
   if (error) {
     return NextResponse.redirect(new URL(`/upload?error=${error}`, request.url));
   }
@@ -31,21 +31,21 @@ export async function GET(request: Request): Promise<NextResponse> {
     return NextResponse.redirect(new URL("/upload?error=no_code", request.url));
   }
 
-  const config = getOAuthConfig();
+  const config = getFeishuOAuthConfig();
 
   if (!config) {
     return NextResponse.redirect(new URL("/upload?error=not_configured", request.url));
   }
 
   // Exchange code for access token
-  const accessToken = await exchangeCodeForToken(config, code);
+  const accessToken = await exchangeFeishuCodeForToken(config, code);
 
   if (!accessToken) {
     return NextResponse.redirect(new URL("/upload?error=token_exchange_failed", request.url));
   }
 
-  // Get GitHub user info
-  const user = await getGitHubUser(accessToken);
+  // Get Feishu user info
+  const user = await getFeishuUser(accessToken);
 
   if (!user) {
     return NextResponse.redirect(new URL("/upload?error=user_fetch_failed", request.url));
@@ -66,7 +66,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   });
 
   // Apply session cookie
-  applySessionCookie(response, { user, provider: "github" });
+  applySessionCookie(response, { user, provider: "feishu" });
 
   return response;
 }

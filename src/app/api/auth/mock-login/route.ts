@@ -12,6 +12,6 @@ const mockUser: GitHubUser = {
 
 export async function POST(): Promise<NextResponse> {
   const response = NextResponse.json({ success: true, user: mockUser });
-  applySessionCookie(response, { user: mockUser });
+  applySessionCookie(response, { user: mockUser, provider: "github" });
   return response;
 }
