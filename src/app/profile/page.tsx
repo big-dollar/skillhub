@@ -3,6 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ShareDialog } from "@/components/skills/share-dialog";
+
+interface SharedUser {
+  id: string | number;
+  name: string;
+  avatar_url: string;
+  sharedAt: string;
+}
 
 interface Skill {
   id: string;
@@ -12,6 +20,8 @@ interface Skill {
   likes: number;
   downloads: number;
   version?: string;
+  visibility: "public" | "private";
+  sharedWith?: SharedUser[];
   createdAt: string;
   updatedAt?: string;
 }
@@ -22,6 +32,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [shareSkill, setShareSkill] = useState<Skill | null>(null);
 
   useEffect(() => {
     fetchMySkills();
@@ -139,6 +150,22 @@ export default function ProfilePage() {
                         {skill.version}
                       </span>
                     )}
+                    {/* Visibility Badge */}
+                    {skill.visibility === "private" ? (
+                      <span className="inline-flex items-center gap-1 text-xs bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-2 py-1 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        私有
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                        </svg>
+                        公开
+                      </span>
+                    )}
                   </div>
                   <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                     {skill.summary}
@@ -167,6 +194,21 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
+                  {/* Share Button */}
+                  <button
+                    onClick={() => setShareSkill(skill)}
+                    className="rounded-md border border-border px-3 py-2 text-sm font-medium transition-colors hover:border-primary hover:text-primary flex items-center gap-1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>
+                    </svg>
+                    分享
+                    {skill.sharedWith && skill.sharedWith.length > 0 && (
+                      <span className="ml-1 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+                        {skill.sharedWith.length}
+                      </span>
+                    )}
+                  </button>
                   <Link
                     href={`/skills/${skill.slug}/edit`}
                     className="rounded-md border border-border px-3 py-2 text-sm font-medium transition-colors hover:border-primary hover:text-primary flex items-center gap-1"
@@ -193,6 +235,15 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Share Dialog */}
+      {shareSkill && (
+        <ShareDialog
+          skill={shareSkill}
+          isOpen={!!shareSkill}
+          onClose={() => setShareSkill(null)}
+        />
       )}
     </div>
   );

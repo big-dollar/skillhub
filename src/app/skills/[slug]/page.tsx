@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getSkillBySlug } from "@/lib/mock-data";
 import { LikeButton } from "@/components/skills/like-button";
+import { getSession } from "@/lib/auth/session";
 
 export default async function SkillDetailPage({
   params,
@@ -9,7 +10,10 @@ export default async function SkillDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const skill = await getSkillBySlug(resolvedParams.slug);
+  const session = await getSession();
+  const userIdRaw = session?.user ? (typeof session.user.id === "number" ? session.user.id : session.user.name) : undefined;
+  const userId = userIdRaw ?? undefined;
+  const skill = await getSkillBySlug(resolvedParams.slug, userId);
 
   if (!skill) {
     notFound();
@@ -89,9 +93,6 @@ export default async function SkillDetailPage({
                  {block}
                </p>
              ))}
-             <div className="bg-muted p-4 rounded-lg my-6 font-mono text-sm border">
-                <span className="text-primary">npm</span> install @skillhub/{skill.slug}
-             </div>
            </div>
         </div>
         

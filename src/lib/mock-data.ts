@@ -128,15 +128,15 @@ const demoSkillSeeds: DemoSkillSeed[] = [
   },
 ];
 
-export async function getSkills(query?: string, sort: HomeSort = "likes"): Promise<Skill[]> {
-  const { service } = await ensureDemoData();
-  const records = await service.searchSkills(query, sort);
+export async function getSkills(query?: string, sort: HomeSort = "likes", userId?: string | number): Promise<Skill[]> {
+  const { repository } = await ensureDemoData();
+  const records = await repository.list({ q: query, sort }, userId);
   return Promise.all(records.map((record) => toSkill(record)));
 }
 
-export async function getSkillBySlug(slug: string): Promise<Skill | null> {
-  const { service } = await ensureDemoData();
-  const record = await service.getSkillBySlug(slug);
+export async function getSkillBySlug(slug: string, userId?: string | number): Promise<Skill | null> {
+  const { repository } = await ensureDemoData();
+  const record = await repository.getBySlug(slug, userId);
   return record ? toSkill(record) : null;
 }
 

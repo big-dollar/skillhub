@@ -6,20 +6,23 @@ import type {
   SkillRecord,
   SkillStore,
   SortField,
+  SharedUser,
 } from "@/lib/skills/types";
 
 const EMPTY_STORE: SkillStore = { skills: [] };
 
 export interface ISkillRepository {
-  list(options?: ListSkillsOptions): Promise<SkillRecord[]>;
-  getBySlug(slug: string): Promise<SkillRecord | null>;
-  getById(id: string): Promise<SkillRecord | null>;
+  list(options?: ListSkillsOptions, userId?: string | number | null): Promise<SkillRecord[]>;
+  getBySlug(slug: string, userId?: string | number | null): Promise<SkillRecord | null>;
+  getById(id: string, userId?: string | number | null): Promise<SkillRecord | null>;
   getByUploader(uploaderId: number | string): Promise<SkillRecord[]>;
   create(input: CreateSkillRecordInput): Promise<SkillRecord>;
   update(id: string, input: Partial<SkillRecord>): Promise<SkillRecord>;
   delete(id: string): Promise<void>;
   incrementLikes(id: string): Promise<SkillRecord>;
   incrementDownloads(id: string): Promise<SkillRecord>;
+  shareSkill(skillId: string, userId: string | number, userName: string, userAvatar: string): Promise<SkillRecord>;
+  removeShare(skillId: string, userId: string | number): Promise<SkillRecord>;
 }
 
 export class SkillRepository implements ISkillRepository {
@@ -31,30 +34,43 @@ export class SkillRepository implements ISkillRepository {
     this.filePath = path.join(this.rootDir, "skills.json");
   }
 
-  async list(options: ListSkillsOptions = {}): Promise<SkillRecord[]> {
+  async list(options: ListSkillsOptions = {}, userId?: string | number | null): Promise<SkillRecord[]> {
     const store = await this.readStore();
 
     return sortSkills(
-      store.skills.filter((skill) => matchesQuery(skill, options.q)),
+      store.skills.filter((skill) => matchesQuery(skill, options.q) && this.canAccessSkill(skill, userId)),
       options.sort ?? "likes",
     );
   }
 
-  async getBySlug(slug: string): Promise<SkillRecord | null> {
+  async getBySlug(slug: string, userId?: string | number | null): Promise<SkillRecord | null> {
     const store = await this.readStore();
-    return store.skills.find((skill) => skill.slug === slug) ?? null;
+    const skill = store.skills.find((skill) => skill.slug === slug) ?? null;
+    
+    if (skill && !this.canAccessSkill(skill, userId)) {
+      return null;
+    }
+    
+    return skill;
   }
 
-  async getById(id: string): Promise<SkillRecord | null> {
+  async getById(id: string, userId?: string | number | null): Promise<SkillRecord | null> {
     const store = await this.readStore();
-    return store.skills.find((skill) => skill.id === id) ?? null;
+    const skill = store.skills.find((skill) => skill.id === id) ?? null;
+    
+    if (skill && !this.canAccessSkill(skill, userId)) {
+      return null;
+    }
+    
+    return skill;
   }
 
   async getByUploader(uploaderId: number | string): Promise<SkillRecord[]> {
     const store = await this.readStore();
     return store.skills.filter((skill) => 
       skill.uploaderGitHubId === uploaderId || 
-      skill.uploaderName === uploaderId
+      skill.uploaderName === uploaderId ||
+      skill.uploaderId === uploaderId
     );
   }
 
@@ -64,6 +80,8 @@ export class SkillRepository implements ISkillRepository {
       ...input,
       likes: input.likes ?? 0,
       downloads: input.downloads ?? 0,
+      visibility: input.visibility ?? "public",
+      sharedWith: input.sharedWith ?? [],
     };
 
     store.skills.push(record);
@@ -112,8 +130,88 @@ export class SkillRepository implements ISkillRepository {
     await this.writeStore(store);
   }
 
+  async shareSkill(skillId: string, userId: string | number, userName: string, userAvatar: string): Promise<SkillRecord> {
+    const store = await this.readStore();
+    const index = store.skills.findIndex((skill) => skill.id === skillId);
+
+    if (index === -1) {
+      throw new Error("Skill not found");
+    }
+
+    const skill = store.skills[index];
+    const sharedWith = skill.sharedWith ?? [];
+    
+    // Check if already shared
+    if (sharedWith.some((u) => u.id === userId)) {
+      return skill;
+    }
+
+    const newSharedUser: SharedUser = {
+      id: userId,
+      name: userName,
+      avatar_url: userAvatar,
+      sharedAt: new Date().toISOString(),
+    };
+
+    const updatedSkill: SkillRecord = {
+      ...skill,
+      sharedWith: [...sharedWith, newSharedUser],
+    };
+
+    store.skills[index] = updatedSkill;
+    await this.writeStore(store);
+
+    return updatedSkill;
+  }
+
+  async removeShare(skillId: string, userId: string | number): Promise<SkillRecord> {
+    const store = await this.readStore();
+    const index = store.skills.findIndex((skill) => skill.id === skillId);
+
+    if (index === -1) {
+      throw new Error("Skill not found");
+    }
+
+    const skill = store.skills[index];
+    const sharedWith = skill.sharedWith ?? [];
+
+    const updatedSkill: SkillRecord = {
+      ...skill,
+      sharedWith: sharedWith.filter((u) => u.id !== userId),
+    };
+
+    store.skills[index] = updatedSkill;
+    await this.writeStore(store);
+
+    return updatedSkill;
+  }
+
   async save(skills: SkillRecord[]): Promise<void> {
     await this.writeStore({ skills });
+  }
+
+  private canAccessSkill(skill: SkillRecord, userId?: string | number | null): boolean {
+    // Public skills (or undefined visibility for backward compatibility) are accessible to everyone
+    if (skill.visibility === "public" || !skill.visibility) {
+      return true;
+    }
+
+    // If no user is logged in, they can't access private skills
+    if (!userId) {
+      return false;
+    }
+
+    // Check if user is the uploader
+    if (skill.uploaderId === userId || skill.uploaderGitHubId === userId || skill.uploaderName === userId) {
+      return true;
+    }
+
+    // Check if user is in shared list
+    if (skill.sharedWith?.some((u) => u.id === userId)) {
+      return true;
+    }
+
+    return false;
   }
 
   private async incrementCounter(id: string, field: "likes" | "downloads"): Promise<SkillRecord> {

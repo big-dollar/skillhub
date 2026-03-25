@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthStatus } from "@/components/auth/auth-status";
+import { AdminNav } from "@/components/admin/admin-nav";
 
 export async function Header() {
   return (
@@ -21,6 +22,7 @@ export async function Header() {
           </Link>
           
           <div className="h-6 w-px bg-border mx-2" aria-hidden="true" />
+          <AdminNav />
           <AuthStatus />
         </nav>
       </div>

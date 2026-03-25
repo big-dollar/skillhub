@@ -1,22 +1,17 @@
 import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth/session";
+import { requireAdmin } from "@/lib/admin/auth";
 import { SkillRepository } from "@/lib/skills/repository";
-import { UserRepository } from "@/lib/users/repository";
 
+// GET /api/admin/skills - 获取所有技能（管理员）
 export async function GET(request: Request): Promise<NextResponse> {
   try {
     const session = await requireSession(request);
-    const dataDir = process.env.DATA_DIR ?? "data";
-    const repository = new SkillRepository(dataDir);
-    
-    // Save/update user info
-    const userRepo = new UserRepository(dataDir);
-    await userRepo.saveOrUpdateUser(session.user, session.provider);
-    
-    // Get user ID from session
-    const userId = typeof session.user.id === "number" ? session.user.id : (session.user.name ?? "");
-    const skills = await repository.getByUploader(userId);
-    
+    requireAdmin(session.user);
+
+    const repository = new SkillRepository(process.env.DATA_DIR ?? "data");
+    const skills = await repository.list();
+
     return NextResponse.json({ success: true, skills });
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
@@ -25,8 +20,15 @@ export async function GET(request: Request): Promise<NextResponse> {
         { status: 401 }
       );
     }
-    
-    console.error("Failed to fetch user skills:", error);
+
+    if (error instanceof Error && error.message.includes("Forbidden")) {
+      return NextResponse.json(
+        { success: false, error: "需要管理员权限" },
+        { status: 403 }
+      );
+    }
+
+    console.error("Failed to get all skills:", error);
     return NextResponse.json(
       { success: false, error: "获取技能列表失败" },
       { status: 500 }

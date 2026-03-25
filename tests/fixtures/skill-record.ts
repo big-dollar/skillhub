@@ -19,5 +19,7 @@ export function createSkillRecord(overrides: SkillRecordOverrides): SkillRecord 
     likes: overrides.likes ?? 0,
     downloads: overrides.downloads ?? 0,
     createdAt: overrides.createdAt ?? "2026-03-18T00:00:00.000Z",
+    visibility: overrides.visibility ?? "public",
+    sharedWith: overrides.sharedWith ?? [],
   };
 }

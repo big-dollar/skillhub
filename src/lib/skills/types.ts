@@ -5,6 +5,15 @@ export interface SkillAuthor {
   avatar_url: string;
 }
 
+export type Visibility = "public" | "private";
+
+export interface SharedUser {
+  id: string | number;
+  name: string;
+  avatar_url: string;
+  sharedAt: string;
+}
+
 export interface SkillRecord {
   id: string;
   slug: string;
@@ -14,6 +23,7 @@ export interface SkillRecord {
   uploaderName: string;
   uploaderAvatar?: string;
   uploaderGitHubId?: number;
+  uploaderId?: string | number;
   archivePath: string;
   skillMdPath: string;
   readmeStubPath: string;
@@ -23,6 +33,8 @@ export interface SkillRecord {
   updatedAt?: string;
   version?: string;
   tags?: string[];
+  visibility: Visibility;
+  sharedWith?: SharedUser[];
 }
 
 export type SortField = "likes" | "downloads" | "newest";
@@ -39,6 +51,7 @@ export interface CreateSkillInput {
   uploaderName: string;
   uploaderAvatar?: string;
   uploaderGitHubId?: number;
+  uploaderId?: string | number;
   archivePath: string;
   skillMdPath: string;
   readmeStubPath: string;
@@ -48,6 +61,8 @@ export interface CreateSkillInput {
   updatedAt?: string;
   version?: string;
   tags?: string[];
+  visibility?: Visibility;
+  sharedWith?: SharedUser[];
 }
 
 export interface CreateSkillRecordInput extends CreateSkillInput {

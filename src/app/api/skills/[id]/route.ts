@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { requireSession } from "@/lib/auth/session";
+import { requireSession, getSession } from "@/lib/auth/session";
+import { isAdmin } from "@/lib/admin/auth";
 import { SkillRepository } from "@/lib/skills/repository";
 
 // GET /api/skills/[id] - Get skill by ID
@@ -11,7 +12,11 @@ export async function GET(
     const { id } = await params;
     const repository = new SkillRepository(process.env.DATA_DIR ?? "data");
     
-    const skill = await repository.getById(id);
+    // Get current session for permission check
+    const session = await getSession(request.headers.get("cookie") ?? "");
+    const userId = session?.user ? (typeof session.user.id === "number" ? session.user.id : session.user.name) : undefined;
+    
+    const skill = await repository.getById(id, userId);
     if (!skill) {
       return NextResponse.json(
         { success: false, error: "技能不存在" },
@@ -38,8 +43,11 @@ export async function DELETE(
     const { id } = await params;
     const repository = new SkillRepository(process.env.DATA_DIR ?? "data");
     
-    // Get the skill
-    const skill = await repository.getById(id);
+    // Get user ID for permission checks
+    const userId = typeof session.user.id === "number" ? session.user.id : session.user.name;
+    
+    // Get the skill with userId to allow owner access to private skills
+    const skill = await repository.getById(id, userId);
     if (!skill) {
       return NextResponse.json(
         { success: false, error: "技能不存在" },
@@ -47,10 +55,10 @@ export async function DELETE(
       );
     }
     
-    // Check if user owns this skill
-    const userId = typeof session.user.id === "number" ? session.user.id : session.user.name;
-    const uploaderId = skill.uploaderGitHubId ?? skill.uploaderName;
-    if (uploaderId !== userId) {
+    // Check if user owns this skill or is admin
+    const uploaderId = skill.uploaderGitHubId ?? skill.uploaderName ?? skill.uploaderId;
+    const userIsAdmin = isAdmin(session.user);
+    if (uploaderId !== userId && !userIsAdmin) {
       return NextResponse.json(
         { success: false, error: "无权删除此技能" },
         { status: 403 }

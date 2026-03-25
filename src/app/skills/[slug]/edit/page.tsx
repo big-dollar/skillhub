@@ -10,6 +10,8 @@ interface Skill {
   title: string;
   summary: string;
   version?: string;
+  tags?: string[];
+  visibility?: "public" | "private";
 }
 
 export default function EditSkillPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -19,6 +21,9 @@ export default function EditSkillPage({ params }: { params: Promise<{ slug: stri
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [visibility, setVisibility] = useState<"public" | "private">("public");
 
   useEffect(() => {
     // Unwrap params
@@ -38,10 +43,31 @@ export default function EditSkillPage({ params }: { params: Promise<{ slug: stri
       }
       
       setSkill(data.skill);
+      setTags(data.skill.tags || []);
+      setVisibility(data.skill.visibility || "public");
     } catch (err) {
       setError(err instanceof Error ? err.message : "获取技能信息失败");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddTag = () => {
+    const trimmedTag = tagInput.trim();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags([...tags, trimmedTag]);
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
     }
   };
 
@@ -51,6 +77,12 @@ export default function EditSkillPage({ params }: { params: Promise<{ slug: stri
     setError(null);
 
     const formData = new FormData(e.currentTarget);
+    
+    // Add tags and visibility to form data
+    tags.forEach((tag) => {
+      formData.append("tags", tag);
+    });
+    formData.append("visibility", visibility);
 
     try {
       if (!skill) {
@@ -153,6 +185,80 @@ export default function EditSkillPage({ params }: { params: Promise<{ slug: stri
           />
         </div>
 
+        {/* Tags Input */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">
+            标签
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              placeholder="输入标签并按回车添加"
+              className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            />
+            <button
+              type="button"
+              onClick={handleAddTag}
+              className="rounded-md bg-muted px-4 py-2 text-sm font-medium transition-colors hover:bg-muted/80"
+            >
+              添加
+            </button>
+          </div>
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-sm text-primary"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTag(tag)}
+                    className="hover:text-primary/70"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Visibility Selection */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">
+            可见性
+          </label>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="visibility"
+                value="public"
+                checked={visibility === "public"}
+                onChange={(e) => setVisibility(e.target.value as "public" | "private")}
+                className="h-4 w-4"
+              />
+              <span className="text-sm">公开 - 所有人可见</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="visibility"
+                value="private"
+                checked={visibility === "private"}
+                onChange={(e) => setVisibility(e.target.value as "public" | "private")}
+                className="h-4 w-4"
+              />
+              <span className="text-sm">私有 - 仅自己和被分享者可见</span>
+            </label>
+          </div>
+        </div>
+
         <div className="space-y-3">
           <label className="text-sm font-medium" htmlFor="file">
             技能 ZIP 文件（重新上传将替换现有文件）
@@ -163,9 +269,8 @@ export default function EditSkillPage({ params }: { params: Promise<{ slug: stri
             id="file"
             name="file"
             type="file"
-            required
           />
-          <p className="text-sm text-muted-foreground">压缩包必须包含 SKILL.md 文件。</p>
+          <p className="text-sm text-muted-foreground">压缩包必须包含 SKILL.md 文件。如不重新上传，将保留现有文件。</p>
         </div>
 
         <div className="flex justify-end gap-4 border-t pt-4">

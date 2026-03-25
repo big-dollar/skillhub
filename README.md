@@ -1,4 +1,4 @@
-# SkillHub - 开发者 Skill 分享平台
+# SkillHub - 开发者技能分享平台
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js" alt="Next.js">
@@ -11,7 +11,7 @@
 
 <p align="center">
   <strong>一个优雅、轻量的开发者知识库平台</strong><br>
-  浏览、分享并发现优质的开发 skill、patterns 与架构指南
+  浏览、分享并发现优质的开发技能、patterns 与架构指南
 </p>
 
 ---
@@ -19,7 +19,7 @@
 ## ✨ 核心功能
 
 ### 🔍 智能搜索与排序
-- **全文搜索**：支持按标题、描述、标签搜索 skill
+- **全文搜索**：支持按标题、描述、标签搜索技能
 - **多维排序**：点赞最多、最新发布、下载最多
 - **实时过滤**：即时展示搜索结果
 
@@ -29,16 +29,28 @@
 - **真实身份**：显示用户头像和姓名
 - **安全可靠**：基于 OAuth 2.0 标准协议
 
-### 📦 Skill 上传与分享
+### 📦 技能上传与分享
 - **ZIP 上传**：支持上传包含 `SKILL.md` 的压缩包
-- **自动解析**：自动提取 skill 元数据和文档
-- **README 生成**：智能生成 skill 介绍文档
-- **版本管理**：支持 skill 版本号管理
+- **自动解析**：自动提取技能元数据和文档
+- **README 生成**：智能生成技能介绍文档
+- **版本管理**：支持技能版本号管理
+- **标签系统**：为技能添加自定义标签
+- **可见性控制**：公开或私有技能
+
+### 🔒 私有技能分享
+- **私有技能**：仅上传者和被分享者可见
+- **用户搜索**：按姓名搜索用户进行分享
+- **分享管理**：随时添加或移除分享用户
+
+### 👑 管理员后台
+- **系统概览**：统计数据、最近上传、活跃上传者
+- **技能管理**：查看、搜索、删除所有技能
+- **用户管理**：查看所有注册用户
 
 ### ❤️ 社区互动
-- **点赞系统**：为喜欢的 skill 点赞
-- **下载统计**：记录每个 skill 的下载次数
-- **作者展示**：显示上传者 GitHub 信息和头像
+- **点赞系统**：为喜欢的技能点赞
+- **下载统计**：记录每个技能的下载次数
+- **作者展示**：显示上传者信息和头像
 
 ---
 
@@ -67,31 +79,25 @@ skillhub/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── api/               # API 路由
+│   │   │   ├── admin/         # 管理员 API
 │   │   │   ├── auth/          # 认证相关
-│   │   │   │   ├── callback/
-│   │   │   │   │   ├── github/       # GitHub OAuth 回调
-│   │   │   │   │   └── feishu/       # 飞书 OAuth 回调
-│   │   │   │   ├── login/            # GitHub 登录跳转
-│   │   │   │   ├── feishu-login/     # 飞书登录跳转
-│   │   │   │   └── logout/           # 退出登录
-│   │   │   └── skills/        # Skill API
-│   │   │       ├── [id]/
-│   │   │       │   ├── download/     # 下载接口
-│   │   │       │   └── like/         # 点赞接口
-│   │   │       └── upload/           # 上传接口
+│   │   │   └── skills/        # 技能 API
+│   │   ├── admin/             # 管理员后台页面
 │   │   ├── page.tsx           # 首页
 │   │   ├── upload/page.tsx    # 上传页
-│   │   └── skills/[slug]/     # Skill 详情页
+│   │   └── skills/[slug]/     # 技能详情页
 │   ├── components/            # React 组件
+│   │   ├── admin/            # 管理员组件
 │   │   ├── auth/             # 认证组件
 │   │   ├── layout/           # 布局组件
-│   │   └── skills/           # Skill 组件
+│   │   └── skills/           # 技能组件
 │   └── lib/                   # 工具库
+│       ├── admin/            # 管理员逻辑
 │       ├── auth/             # 认证逻辑
-│       ├── skills/           # Skill 数据层
-│       └── ingestion/        # 上传处理
-├── tests/                     # 测试文件
+│       ├── skills/           # 技能数据层
+│       └── users/            # 用户数据层
 ├── data/                      # 数据存储目录
+├── tests/                     # 测试文件
 └── public/                    # 静态资源
 ```
 
@@ -137,6 +143,12 @@ FEISHU_APP_SECRET=your_feishu_app_secret
 
 # 应用地址
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# 管理员配置（可选）
+# GitHub 用户名，多个用逗号分隔
+GITHUB_ADMIN_LOGINS=admin1,admin2
+# 飞书用户 ID，多个用逗号分隔
+FEISHU_ADMIN_IDS=20160602,user2
 ```
 
 ### 4. 启动开发服务器
@@ -169,20 +181,14 @@ pnpm test
 pnpm lint
 ```
 
-测试覆盖：
-- ✅ 认证流程测试
-- ✅ Skill 数据层测试
-- ✅ API 集成测试
-- ✅ ZIP 解析测试
-
 ---
 
-## 📝 Skill 上传规范
+## 📝 技能上传规范
 
 ### ZIP 包结构
 ```
 your-skill.zip
-├── SKILL.md          # 必须：skill 文档
+├── SKILL.md          # 必须：技能文档
 ├── README.md         # 可选：详细说明
 └── ...               # 其他资源文件
 ```
@@ -206,6 +212,36 @@ your-skill.zip
 
 ---
 
+## 👑 管理员配置
+
+### 方式一：环境变量（推荐）
+在 `.env.local` 中添加：
+```bash
+# GitHub 管理员用户名（逗号分隔）
+GITHUB_ADMIN_LOGINS=big-dollar,admin2
+
+# 飞书管理员用户 ID（逗号分隔）
+FEISHU_ADMIN_IDS=20160602,user2
+```
+
+### 方式二：修改代码
+编辑 `src/lib/admin/config.ts`：
+```typescript
+export const DEFAULT_ADMIN_CONFIG: AdminConfig = {
+  githubAdminIds: [],
+  githubAdminLogins: ["big-dollar"],
+  feishuAdminIds: ["20160602"],
+};
+```
+
+### 访问管理后台
+管理员登录后，顶部导航栏会显示"管理后台"入口，或直接访问：
+- `/admin` - 系统概览
+- `/admin/skills` - 技能管理
+- `/admin/users` - 用户管理
+
+---
+
 ## 🔒 安全特性
 
 - **CSRF 防护**：OAuth state 参数验证
@@ -213,6 +249,7 @@ your-skill.zip
 - **SameSite 策略**：防止跨站请求伪造
 - **输入验证**：ZIP 文件安全检查
 - **路径安全**：防止目录遍历攻击
+- **权限控制**：基于角色的访问控制
 
 ---
 
@@ -252,7 +289,7 @@ your-skill.zip
 
 ## 💡 灵感来源
 
-本项目受 [ClawHub](https://clawhub.ai) 启发，致力于为开发者打造一个简洁、优雅的 skill 分享平台。
+本项目受 [ClawHub](https://clawhub.ai) 启发，致力于为开发者打造一个简洁、优雅的技能分享平台。
 
 ---
 
