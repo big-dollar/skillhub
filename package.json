@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:swc": "TURBOPACK=0 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

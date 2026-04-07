@@ -174,9 +174,9 @@ async function ensureDemoData() {
       summary: seed.description,
       description: seed.description,
       uploaderName: seed.uploaderName,
-      archivePath: path.relative(process.cwd(), archivePath),
-      skillMdPath: path.relative(process.cwd(), skillMdPath),
-      readmeStubPath: path.relative(process.cwd(), readmeStubPath),
+      archivePath: path.posix.join(path.posix.relative(process.cwd().replace(/\\/g, '/'), uploadsDir.replace(/\\/g, '/')), `${slugBase}.zip`),
+      skillMdPath: path.posix.join(path.posix.relative(process.cwd().replace(/\\/g, '/'), extractedDir.replace(/\\/g, '/')), `${slugBase}-SKILL.md`),
+      readmeStubPath: path.posix.join(path.posix.relative(process.cwd().replace(/\\/g, '/'), generatedDir.replace(/\\/g, '/')), `${slugBase}-README.md`),
       likes: seed.likes,
       downloads: seed.downloads,
       createdAt: seed.createdAt,
@@ -190,7 +190,8 @@ async function ensureDemoData() {
 }
 
 async function toSkill(record: Awaited<ReturnType<SkillService["getSkillById"]>> extends infer T ? Exclude<T, null> : never): Promise<Skill> {
-  const readmeAbsolutePath = path.resolve(process.cwd(), record.readmeStubPath);
+  const normalizedPath = record.readmeStubPath.replace(/\\/g, '/');
+  const readmeAbsolutePath = path.resolve(process.cwd(), normalizedPath);
   const readmeContent = await readFile(readmeAbsolutePath, "utf8");
 
   return {

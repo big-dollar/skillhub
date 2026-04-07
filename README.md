@@ -155,6 +155,10 @@ FEISHU_ADMIN_IDS=20160602,user2
 ```bash
 pnpm dev
 ```
+> **注意：** 如果你在 Linux 环境（或某些特定的 CPU/虚拟机配置下）遇到类似 `CPU doesn't support the popcnt instruction` 或由于 Turbopack 引起的问题，你可以使用 SWC 替代 Turbopack 进行启动：
+> ```bash
+> pnpm dev:swc
+> ```
 
 访问 http://localhost:3000 即可使用。
 
