@@ -1,4 +1,5 @@
 import type { FeishuUser } from "@/lib/auth/types";
+import { getAppOrigin } from "@/lib/auth/app-origin";
 
 const FEISHU_OAUTH_URL = "https://open.feishu.cn/open-apis/authen/v1/index";
 const FEISHU_TOKEN_URL = "https://open.feishu.cn/open-apis/authen/v1/access_token";
@@ -148,18 +149,18 @@ export async function getFeishuUser(accessToken: string): Promise<FeishuUser | n
   }
 }
 
-export function getFeishuOAuthConfig(): FeishuOAuthConfig | null {
+export function getFeishuOAuthConfig(request?: Request): FeishuOAuthConfig | null {
   const appId = process.env.FEISHU_APP_ID;
   const appSecret = process.env.FEISHU_APP_SECRET;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const appOrigin = getAppOrigin(request);
 
-  if (!appId || !appSecret) {
+  if (!appId || !appSecret || !appOrigin) {
     return null;
   }
 
   return {
     appId,
     appSecret,
-    redirectUri: `${appUrl}/api/auth/callback/feishu`,
+    redirectUri: `${appOrigin}/api/auth/callback/feishu`,
   };
 }

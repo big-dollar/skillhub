@@ -1,4 +1,5 @@
 import type { GitHubUser } from "@/lib/auth/types";
+import { getAppOrigin } from "@/lib/auth/app-origin";
 
 const GITHUB_OAUTH_URL = "https://github.com/login/oauth/authorize";
 const GITHUB_TOKEN_URL = "https://github.com/login/oauth/access_token";
@@ -82,18 +83,18 @@ export async function getGitHubUser(accessToken: string): Promise<GitHubUser | n
   };
 }
 
-export function getOAuthConfig(): GitHubOAuthConfig | null {
+export function getOAuthConfig(request?: Request): GitHubOAuthConfig | null {
   const clientId = process.env.GITHUB_CLIENT_ID;
   const clientSecret = process.env.GITHUB_CLIENT_SECRET;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const appOrigin = getAppOrigin(request);
 
-  if (!clientId || !clientSecret) {
+  if (!clientId || !clientSecret || !appOrigin) {
     return null;
   }
 
   return {
     clientId,
     clientSecret,
-    redirectUri: `${appUrl}/api/auth/callback/github`,
+    redirectUri: `${appOrigin}/api/auth/callback/github`,
   };
 }
