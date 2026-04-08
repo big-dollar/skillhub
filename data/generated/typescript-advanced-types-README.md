@@ -1,12 +1,12 @@
 # TypeScript Advanced Types
 
-> AI-generated README stub
+> AI 生成的 README 草稿
 
-## Overview
+## 概览
 
 Deep dive into utility types, mapped types, conditional types, and template literal types to write robust and type-safe code.
 
-## Included topics
+## 包含主题
 
 - typescript
 - types

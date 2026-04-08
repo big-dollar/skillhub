@@ -1,12 +1,12 @@
 # Tailwind CSS Pro Tips
 
-> AI-generated README stub
+> AI 生成的 README 草稿
 
-## Overview
+## 概览
 
 Learn how to build complex, responsive, and beautiful UIs with Tailwind CSS. Covers arbitrary values, custom plugins, and dark mode.
 
-## Included topics
+## 包含主题
 
 - css
 - tailwind

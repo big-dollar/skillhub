@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "id": "20160602",
+      "name": "刘远",
+      "avatar_url": "https://s1-imfile.feishucdn.com/static-resource/v1/v3_00ka_c0b43835-e691-4131-ac80-0420610c39fg~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp",
+      "provider": "feishu",
+      "email": "liuyuan@motie.com",
+      "firstSeenAt": "2026-03-24T09:57:01.841Z",
+      "lastSeenAt": "2026-03-24T14:00:52.119Z"
+    }
+  ]
+}
