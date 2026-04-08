@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { getAppOrigin } from "@/lib/auth/app-origin";
 import { applySessionCookie } from "@/lib/auth/session";
 import { exchangeCodeForToken, getGitHubUser, getOAuthConfig } from "@/lib/auth/github";
 
 export async function GET(request: Request): Promise<NextResponse> {
   const url = new URL(request.url);
+  const appOrigin = getAppOrigin(request) ?? new URL(request.url).origin;
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const error = url.searchParams.get("error");
@@ -19,40 +21,40 @@ export async function GET(request: Request): Promise<NextResponse> {
 
   // Validate state to prevent CSRF
   if (!state || state !== storedState) {
-    return NextResponse.redirect(new URL("/upload?error=invalid_state", request.url));
+    return NextResponse.redirect(new URL("/upload?error=invalid_state", appOrigin));
   }
 
   // Handle GitHub OAuth errors
   if (error) {
-    return NextResponse.redirect(new URL(`/upload?error=${error}`, request.url));
+    return NextResponse.redirect(new URL(`/upload?error=${error}`, appOrigin));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL("/upload?error=no_code", request.url));
+    return NextResponse.redirect(new URL("/upload?error=no_code", appOrigin));
   }
 
   const config = getOAuthConfig(request);
 
   if (!config) {
-    return NextResponse.redirect(new URL("/upload?error=not_configured", request.url));
+    return NextResponse.redirect(new URL("/upload?error=not_configured", appOrigin));
   }
 
   // Exchange code for access token
   const accessToken = await exchangeCodeForToken(config, code);
 
   if (!accessToken) {
-    return NextResponse.redirect(new URL("/upload?error=token_exchange_failed", request.url));
+    return NextResponse.redirect(new URL("/upload?error=token_exchange_failed", appOrigin));
   }
 
   // Get GitHub user info
   const user = await getGitHubUser(accessToken);
 
   if (!user) {
-    return NextResponse.redirect(new URL("/upload?error=user_fetch_failed", request.url));
+    return NextResponse.redirect(new URL("/upload?error=user_fetch_failed", appOrigin));
   }
 
   // Create session
-  const response = NextResponse.redirect(new URL("/upload", request.url));
+  const response = NextResponse.redirect(new URL("/upload", appOrigin));
 
   // Clear oauth state cookie
   response.cookies.set({
