@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { getFeishuOAuthUrl, getFeishuOAuthConfig } from "@/lib/auth/feishu";
 
-export async function GET(): Promise<NextResponse> {
-  const config = getFeishuOAuthConfig();
+export async function GET(request: Request): Promise<NextResponse> {
+  const config = getFeishuOAuthConfig(request);
 
   if (!config) {
     return NextResponse.json(

@@ -31,7 +31,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     return NextResponse.redirect(new URL("/upload?error=no_code", request.url));
   }
 
-  const config = getOAuthConfig();
+  const config = getOAuthConfig(request);
 
   if (!config) {
     return NextResponse.redirect(new URL("/upload?error=not_configured", request.url));

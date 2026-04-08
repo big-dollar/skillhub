@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { getGitHubOAuthUrl, getOAuthConfig } from "@/lib/auth/github";
 
-export async function GET(): Promise<NextResponse> {
-  const config = getOAuthConfig();
+export async function GET(request: Request): Promise<NextResponse> {
+  const config = getOAuthConfig(request);
 
   if (!config) {
     return NextResponse.json(

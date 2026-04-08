@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getAppOrigin } from "@/lib/auth/app-origin";
 import { clearSessionCookie } from "@/lib/auth/session";
 
 export async function POST(): Promise<NextResponse> {
@@ -7,8 +8,8 @@ export async function POST(): Promise<NextResponse> {
   return response;
 }
 
-export async function GET(): Promise<NextResponse> {
-  const response = NextResponse.redirect(new URL("/", process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"));
+export async function GET(request: Request): Promise<NextResponse> {
+  const response = NextResponse.redirect(new URL("/", getAppOrigin(request) ?? request.url));
   clearSessionCookie(response);
   return response;
 }
